@@ -23,7 +23,34 @@
 -- done.
 ----------------------------------------------------------------------------
 
-module Crypto.Cipher.Spritz where
+module Crypto.Cipher.Spritz (
+  -- * State/Lenses
+  SpritzState (..),
+  i, j, k, z, w, a, s, n,
+
+  -- * Spritz basic functions
+  initializeState,
+  absorb,
+  absorbByte,
+  absorbNibble,
+  absorbStop,
+  shuffle,
+  whip,
+  crush,
+  squeeze,
+  drip,
+  update,
+  output,
+
+  -- * Helper functions
+  low,
+  high,
+  plusmod,
+  submod,
+  swap,
+
+  -- * Making use of everything
+  hash) where
 
 import Control.Applicative
 import Control.Lens
