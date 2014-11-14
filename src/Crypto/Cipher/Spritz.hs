@@ -50,11 +50,18 @@ module Crypto.Cipher.Spritz (
   swap,
 
   -- * Making use of everything
-  hash) where
+  -- ** Hashing
+  hash,
+
+  -- ** Encyrption
+  encrypt,
+  decrypt,
+  keySetup,
+  ) where
 
 import Control.Applicative
 import Control.Lens
-import Control.Monad.State.Strict (State, evalState)
+import Control.Monad.State.Strict (State, evalState, put)
 import Control.Monad
 import Data.Bits
 import qualified Data.Vector as V
@@ -207,3 +214,38 @@ hash m r = evalState $ do
   absorbStop
   absorb (V.fromList [r .&. 0xff])
   squeeze r
+
+-----------------------------------------------------------------------------
+-- Encryption
+-----------------------------------------------------------------------------
+encrypt :: V.Vector Int -- ^ The key.
+        -> V.Vector Int -- ^ The decrypted message.
+        -> SpritzState  -- ^ Starting state.
+        -> V.Vector Int
+encrypt k' m' = evalState $ do
+  n' <- use n
+  -- We do this instead of calling keySetup so the user can pass a state.
+  absorb k'
+  m'' <- squeeze (V.length m')
+  return $ V.map (\i' -> plusmod (m' V.! i') (m'' V.! i') n') (V.fromList [0..V.length m' - 1])
+
+decrypt :: V.Vector Int -- ^ The key.
+        -> V.Vector Int -- ^ The encrypted message.
+        -> SpritzState  -- ^ Starting state.
+        -> V.Vector Int
+decrypt k' c' = evalState $ do
+  n' <- use n
+  -- We do this instead of calling keySetup so the user can pass a state.
+  absorb k'
+  m'' <- squeeze (V.length c')
+  return $ V.map (\i' -> submod (c' V.! i') (m'' V.! i') n') (V.fromList [0..V.length c' - 1])
+
+-- | Used in the paper at the top of 'encrypt'* and 'decrypt', but not used by
+-- default in this library. Still, we provide it in case it's needed.
+--
+-- @keySetup n' k' = put (initializeState n') >> absorb k'@
+keySetup :: Int -- ^ Our N value. 256 in the paper.
+         -> V.Vector Int -- ^ The key.
+         -> State SpritzState ()
+keySetup n' k' =
+  put (initializeState n') >> absorb k'
