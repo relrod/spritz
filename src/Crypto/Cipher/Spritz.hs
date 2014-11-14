@@ -41,13 +41,12 @@ data SpritzState = SpritzState
                    , _a :: Int
                    , _s :: V.Vector Int
                    , _n :: Int
-                   , _debug :: Int
                    } deriving (Show, Eq, Ord)
 
 makeLenses ''SpritzState
 
 initializeState :: Int -> SpritzState
-initializeState n' = SpritzState 0 0 0 0 1 0 (V.fromList [0..n'-1]) n' 0
+initializeState n' = SpritzState 0 0 0 0 1 0 (V.fromList [0..n'-1]) n'
 
 absorb :: V.Vector Int -> State SpritzState ()
 absorb i' =
