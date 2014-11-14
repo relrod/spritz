@@ -5,7 +5,7 @@ cd "$cwd/.."
 f=`mktemp -d`
 git clone git@github.com:relrod/spritz.git "$f/spritz.git"
 standalone-haddock --package-db .cabal-sandbox/*packages.conf.d/ -o "$f" .
-pushd "$f/-.git"
+pushd "$f/spritz.git"
   git checkout gh-pages && git rm -rf *
   mv ../spritz/* .
   mv ../spritz/.* .
