@@ -163,20 +163,20 @@ update = do
   n' <- use n
   i .= plusmod i' w' n'
   i'' <- use i
-  j .= plusmod k' (s' V.! (plusmod j' (s' V.! i'') n')) n'
+  j .= plusmod k' (s' V.! plusmod j' (s' V.! i'') n') n'
   j'' <- use j
   k .= plusmod (i'' + k') (s' V.! j'') n'
   swap i'' j''
 
 output :: State SpritzState Int
 output = do
-  s' <- use s
   j' <- use j
+  s' <- use s
   i' <- use i
   z' <- use z
   k' <- use k
   n' <- use n
-  z .= s' V.! (plusmod j' (s' V.! (plusmod i' (s' V.! (plusmod z' k' n')) n')) n')
+  z .= s' V.! plusmod j' (s' V.! plusmod i' (s' V.! plusmod z' k' n') n') n'
   use z
 
 low :: (Bits a, Num a,Show a) => a -> a
