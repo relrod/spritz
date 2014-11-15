@@ -304,7 +304,7 @@ keySetup n' k' =
 --
 -- The given @r@ is absorbed for functional separation.
 --
--- See § 2.3.
+-- See §2.3.
 hash :: V.Vector Int -- ^ The message.
      -> Int          -- ^ r (number of bytes).
      -> SpritzState  -- ^ Initial state.
