@@ -243,6 +243,16 @@ decrypt k' c' = evalState $ do
   m'' <- squeeze (V.length c')
   return $ V.map (\i' -> submod (c' V.! i') (m'' V.! i') n') (V.fromList [0..V.length c' - 1])
 
+-- | Used in the paper at the top of 'encrypt'* and 'decrypt', but not used by
+-- default in this library. Still, we provide it in case it's needed.
+--
+-- @keySetup n' k' = put (initializeState n') >> absorb k'@
+keySetup :: Int -- ^ Our N value. 256 in the paper.
+         -> V.Vector Int -- ^ The key.
+         -> State SpritzState ()
+keySetup n' k' =
+  put (initializeState n') >> absorb k'
+
 -----------------------------------------------------------------------------
 -- Message Authentication Code (MAC)
 -----------------------------------------------------------------------------
@@ -258,13 +268,3 @@ mac k' m' r' = evalState $ do
   absorbStop
   absorb (V.fromList [r' .&. 0xff])
   squeeze r'
-
--- | Used in the paper at the top of 'encrypt'* and 'decrypt', but not used by
--- default in this library. Still, we provide it in case it's needed.
---
--- @keySetup n' k' = put (initializeState n') >> absorb k'@
-keySetup :: Int -- ^ Our N value. 256 in the paper.
-         -> V.Vector Int -- ^ The key.
-         -> State SpritzState ()
-keySetup n' k' =
-  put (initializeState n') >> absorb k'
