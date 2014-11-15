@@ -57,6 +57,9 @@ module Crypto.Cipher.Spritz (
   encrypt,
   decrypt,
   keySetup,
+
+  -- ** Message Authentication Code (MAC)
+  mac,
   ) where
 
 import Control.Applicative
@@ -239,6 +242,22 @@ decrypt k' c' = evalState $ do
   absorb k'
   m'' <- squeeze (V.length c')
   return $ V.map (\i' -> submod (c' V.! i') (m'' V.! i') n') (V.fromList [0..V.length c' - 1])
+
+-----------------------------------------------------------------------------
+-- Message Authentication Code (MAC)
+-----------------------------------------------------------------------------
+mac :: V.Vector Int -- ^ The key.
+    -> V.Vector Int -- ^ The message.
+    -> Int -- ^ r
+    -> SpritzState
+    -> V.Vector Int
+mac k' m' r' = evalState $ do
+  absorb k'
+  absorbStop
+  absorb m'
+  absorbStop
+  absorb (V.fromList [r' .&. 0xff])
+  squeeze r'
 
 -- | Used in the paper at the top of 'encrypt'* and 'decrypt', but not used by
 -- default in this library. Still, we provide it in case it's needed.
