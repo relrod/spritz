@@ -230,7 +230,7 @@ encrypt k' m' = evalState $ do
   -- We do this instead of calling keySetup so the user can pass a state.
   absorb k'
   m'' <- squeeze (V.length m')
-  return $ V.map (\i' -> plusmod (m' V.! i') (m'' V.! i') n') (V.fromList [0..V.length m' - 1])
+  return $ V.map (uncurry (\x y -> plusmod x y n')) (V.zip m' m'')
 
 decrypt :: V.Vector Int -- ^ The key.
         -> V.Vector Int -- ^ The encrypted message.
@@ -241,7 +241,7 @@ decrypt k' c' = evalState $ do
   -- We do this instead of calling keySetup so the user can pass a state.
   absorb k'
   m'' <- squeeze (V.length c')
-  return $ V.map (\i' -> submod (c' V.! i') (m'' V.! i') n') (V.fromList [0..V.length c' - 1])
+  return $ V.map (uncurry (\x y -> submod x y n')) (V.zip c' m'')
 
 -- | Used in the paper at the top of 'encrypt'* and 'decrypt', but not used by
 -- default in this library. Still, we provide it in case it's needed.
