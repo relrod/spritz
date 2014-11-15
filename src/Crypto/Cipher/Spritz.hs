@@ -111,8 +111,7 @@ initializeState n' = SpritzState 0 0 0 0 1 0 (V.fromList [0..n'-1]) n'
 --
 -- See §3.2 "Absorb".
 absorb :: V.Vector Int -> State SpritzState ()
-absorb i' =
-  mapM_ (\v -> absorbByte $ i' V.! v) [0..V.length i' - 1]
+absorb i' = V.mapM_ absorbByte i'
 
 -- | Splits the given input byte into two nibbles and updates state based on
 -- each nibble, low-order nibble first. See §3.2 "AbsorbByte".
@@ -178,6 +177,7 @@ crush :: State SpritzState ()
 crush = do
   n' <- use n
   let n'' = floor ((fromIntegral n' :: Double) / 2) - 1
+  -- TODO: This should be done more idiomatically.
   mapM_ (f n') [0..n'']
   where
     f n' v = do
