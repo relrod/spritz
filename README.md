@@ -1,4 +1,4 @@
-# spritz
+# spritz [![Build Status](https://travis-ci.org/relrod/spritz.svg?branch=master)](https://travis-ci.org/relrod/spritz)
 
 This is an implementation of the
 [Spritz](https://people.csail.mit.edu/rivest/pubs/RS14.pdf) spongy RC4-like
