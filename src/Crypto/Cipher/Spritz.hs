@@ -17,6 +17,8 @@
 -- rely heavily on use of the State monad. We also make heavy use of the lens
 -- library's combinators, internally, to ease our use of State.
 --
+-- Please report any and all bugs to <https://github.com/relrod/spritz>.
+--
 -- Lastly, I must give a shout-out to
 -- <https://github.com/therealjampers/spritzjs spritzjs> for the bitmasking
 -- parts and for existing so that I had something to test against when I was
