@@ -120,7 +120,10 @@ absorbByte b = do
   absorbNibble $ low b
   absorbNibble $ high b
 
--- | TODO: Write documentation. See §3.2 "AbsorbNibble".
+-- | Tests whether Spritz is full of absorbed data
+-- (i.e. @'a' = 'floor' ('n' / 2)@. If it is, calls 'shuffle' to mix in the
+-- absorbed data and reset 'a' to 0. Then updates the state based on the value
+-- of the supplied nibble. See §3.2 "AbsorbNibble".
 absorbNibble :: Int -> State SpritzState ()
 absorbNibble x = do
   a' <- use a
@@ -173,6 +176,10 @@ whip r = do
       w'' <- use w
       unless (gcd w'' n' == 1) bumpW
 
+-- | Provides a non-invertable transformation from states to states.
+-- Intentionally loses information about the current state by mapping
+-- 2^(n/2) states to 1 state, since each of @'n'/2@ pairs of compared
+-- values in 's' are sorted into increasing order. See §3.2 "crush".
 crush :: State SpritzState ()
 crush = do
   n' <- use n
@@ -186,6 +193,9 @@ crush = do
       when ((s' V.! v) > (s' V.! idx)) $
         swap v idx
 
+-- | Main output function for Spritz. The 'Int' parameter states how many bytes
+-- to produce. Calls 'shuffle' if @'a' > 0@, which shuffles any unabsorbed
+-- input and puts Spritz into "squeeze mode" (@'a' > 0@). See §3.2 "squeeze".
 squeeze :: Int -> State SpritzState (V.Vector Int)
 squeeze r = do
   a' <- use a
@@ -193,6 +203,9 @@ squeeze r = do
     shuffle
   V.fromList <$> replicateM r drip
 
+-- | Basic pseudorandom output routine. Calls 'shuffle' when @'a' > 0@, updates
+-- state using 'update', and produces one output byte using 'output'. See §3.2
+-- "drip".
 drip :: State SpritzState Int
 drip = do
   a' <- use a
@@ -201,6 +214,10 @@ drip = do
   update
   output
 
+-- | Advances the system to the next state by adding 'w' to 'i', giving 'j' and
+-- 'k' their next values, and swapping 's'_'i' with 's'_'j'. 'w' being
+-- relatively prime to 'n' means that the value of 'i' cycles modulo 'n' as
+-- repeated updates are performed. See §3.2 "update".
 update :: State SpritzState ()
 update = do
   w' <- use w
@@ -216,6 +233,8 @@ update = do
   k .= plusmod (i'' + k') (s' V.! j'') n'
   swap i'' j''
 
+-- | Computes a single byte ('n'-value) to output, saves it in register 'z' and
+-- returns it.
 output :: State SpritzState Int
 output = do
   j' <- use j
@@ -227,9 +246,14 @@ output = do
   z .= s' V.! plusmod j' (s' V.! plusmod i' (s' V.! plusmod z' k' n') n') n'
   use z
 
+-----------------------------------------------------------------------------
+-- Helper functions
+-----------------------------------------------------------------------------
+-- | See §3.1 "Nibbles".
 low :: (Bits a, Num a,Show a) => a -> a
 low b = b .&. 0xf
 
+-- | See §3.1 "Nibbles".
 high :: (Bits a, Num a,Show a) => a -> a
 high b = b `shiftR` 4 .&. 0xf
 
