@@ -1,7 +1,6 @@
 name:                spritz
 version:             0.1.0.0
 synopsis:            An implementation of the Spritz RC4-like stream cipher in Haskell
--- description:
 homepage:            https://github.com/relrod/spritz
 license:             BSD2
 license-file:        LICENSE
@@ -10,13 +9,10 @@ maintainer:          ricky@elrod.me
 copyright:           (C) 2014 Ricky Elrod
 category:            Crypto
 build-type:          Simple
--- extra-source-files:
 cabal-version:       >=1.10
 
 library
   exposed-modules:     Crypto.Cipher.Spritz
-  -- other-modules:
-  -- other-extensions:
   build-depends:       base >= 4 && < 5,
                        lens >= 4 && < 5,
                        mtl >= 2.2 && < 2.3,
