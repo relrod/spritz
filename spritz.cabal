@@ -1,6 +1,15 @@
 name:                spritz
 version:             0.1.0.0
 synopsis:            An implementation of the Spritz RC4-like stream cipher in Haskell
+description:
+  The original paper for the Spritz cipher can be found here:
+
+  <https://people.csail.mit.edu/rivest/pubs/RS14.pdf>
+
+  This package provides a Haskell implementation of the pseudocode in the paper
+  listed above. It intends to be a direct implementation of the cipher, so we
+  rely heavily on use of the State monad. We also make heavy use of the lens
+  library's combinators, internally, to ease our use of State.
 homepage:            https://github.com/relrod/spritz
 license:             BSD2
 license-file:        LICENSE
